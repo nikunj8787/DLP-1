@@ -1,12 +1,19 @@
 import streamlit as st
 from database_manager import get_properties, add_favorite, get_favorites
+from utils import login_form
 
 st.set_page_config(page_title="Customer Dashboard", layout="wide")
 st.title("🏠 Customer Dashboard")
 
 if "user_email" not in st.session_state or st.session_state.get("user_role") != "customer":
-    st.error("Please login as customer via the sidebar.")
+    st.sidebar.header("Customer Login")
+    login_form("customer")
     st.stop()
+
+if st.sidebar.button("Logout"):
+    for k in list(st.session_state.keys()):
+        del st.session_state[k]
+    st.experimental_rerun()
 
 st.subheader("Search Properties")
 df = get_properties(status="approved")
