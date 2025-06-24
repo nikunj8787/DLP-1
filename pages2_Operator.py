@@ -1,12 +1,19 @@
 import streamlit as st
 from database_manager import add_properties_from_csv, get_properties
+from utils import login_form
 
 st.set_page_config(page_title="Operator Dashboard", layout="wide")
 st.title("🧑‍💻 Operator Dashboard")
 
 if "user_email" not in st.session_state or st.session_state.get("user_role") != "operator":
-    st.error("Please login as operator via the sidebar.")
+    st.sidebar.header("Operator Login")
+    login_form("operator")
     st.stop()
+
+if st.sidebar.button("Logout"):
+    for k in list(st.session_state.keys()):
+        del st.session_state[k]
+    st.experimental_rerun()
 
 st.subheader("Upload Properties (CSV)")
 uploaded = st.file_uploader("Upload property CSV", type=["csv"])
