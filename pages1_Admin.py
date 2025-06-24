@@ -1,12 +1,19 @@
 import streamlit as st
 from database_manager import get_properties, update_property_status, get_all_users, verify_user
+from utils import login_form
 
 st.set_page_config(page_title="Admin Dashboard", layout="wide")
 st.title("🛠️ Admin Dashboard")
 
 if "user_email" not in st.session_state or st.session_state.get("user_role") != "admin":
-    st.error("Please login as admin via the sidebar.")
+    st.sidebar.header("Admin Login")
+    login_form("admin")
     st.stop()
+
+if st.sidebar.button("Logout"):
+    for k in list(st.session_state.keys()):
+        del st.session_state[k]
+    st.experimental_rerun()
 
 st.subheader("Pending Property Approvals")
 df = get_properties(status="pending")
